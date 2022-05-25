@@ -1,0 +1,263 @@
+mysql> CREATE DATABASE employee_payroll_service;
+Query OK, 1 row affected (0.05 sec)
+
+mysql> SHOW DATABASES;
++--------------------------+
+| Database                 |
++--------------------------+
+| customer                 |
+| employee_payroll_service |
+| employees                |
+| information_schema       |
+| mysql                    |
+| payroll_service          |
+| performance_schema       |
+| sys                      |
++--------------------------+
+8 rows in set (0.04 sec)
+
+mysql> USE employee_payroll_service;
+Database changed
+
+mysql> SELECT DATABASE();
++--------------------------+
+| DATABASE()               |
++--------------------------+
+| employee_payroll_service |
++--------------------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE employee_payroll
+    -> (id INT unsigned NOT NULL AUTO_INCREMENT,
+    -> name VARCHAR(150) NOT NULL,
+    -> salary Double NOT NULL,
+    -> start DATE NOT NULL,
+    -> PRIMARY KEY (id));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> DESCRIBE employee_payroll;
++--------+--------------+------+-----+---------+----------------+
+| Field  | Type         | Null | Key | Default | Extra          |
++--------+--------------+------+-----+---------+----------------+
+| id     | int unsigned | NO   | PRI | NULL    | auto_increment |
+| name   | varchar(150) | NO   |     | NULL    |                |
+| salary | double       | NO   |     | NULL    |                |
+| start  | date         | NO   |     | NULL    |                |
++--------+--------------+------+-----+---------+----------------+
+4 rows in set (0.05 sec)
+
+mysql> INSERT INTO employee_payroll(name, salary, start) VALUES
+    -> ('Akshar', 10000.00, '2020-01-21'),
+    -> ('Yogesh', 15000.00, '2021-07-02'),
+    -> ('Raj', 20000.00, '2022-02-15');
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employee_payroll;
++----+--------+--------+------------+
+| id | name   | salary | start      |
++----+--------+--------+------------+
+|  1 | Akshar |  10000 | 2020-01-21 |
+|  2 | Yogesh |  15000 | 2021-07-02 |
+|  3 | Raj    |  20000 | 2022-02-15 |
++----+--------+--------+------------+
+3 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employee_payroll ADD gender CHAR(1) AFTER name;
+Query OK, 0 rows affected (0.19 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE employee_payroll set gender = 'M' WHERE name = 'Akshar';
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM employee_payroll;
++----+--------+--------+--------+------------+
+| id | name   | gender | salary | start      |
++----+--------+--------+--------+------------+
+|  1 | Akshar | M      |  10000 | 2020-01-21 |
+|  2 | Yogesh | NULL   |  15000 | 2021-07-02 |
+|  3 | Raj    | NULL   |  20000 | 2022-02-15 |
++----+--------+--------+--------+------------+
+3 rows in set (0.04 sec)
+
+mysql> CREATE TABLE company
+    -> (company_ID INT PRIMARY KEY,
+    -> company_Name VARCHAR(15) NOT NULL);
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> DESCRIBE company;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| company_ID   | int         | NO   | PRI | NULL    |       |
+| company_Name | varchar(15) | NO   |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+2 rows in set (0.06 sec)
+
+mysql> CREATE TABLE employee
+    -> (ID INT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    -> company_ID INT,
+    -> phone_number VARCHAR(250),
+    -> address VARCHAR(250),
+    -> gender char(1),
+    -> name VARCHAR(150) NOT NULL,
+    -> FOREIGN KEY (company_ID) REFERENCES company (company_ID));
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> DESCRIBE employee;
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| ID           | int unsigned | NO   | PRI | NULL    | auto_increment |
+| company_ID   | int          | YES  | MUL | NULL    |                |
+| phone_number | varchar(250) | YES  |     | NULL    |                |
+| address      | varchar(250) | YES  |     | NULL    |                |
+| gender       | char(1)      | YES  |     | NULL    |                |
+| name         | varchar(150) | NO   |     | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+6 rows in set (0.05 sec)
+
+mysql> CREATE TABLE payroll
+    -> (ID INT unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    -> FOREIGN KEY (ID) REFERENCES employee (ID),
+    -> basic_pay DOUBLE NOT NULL,
+    -> deductions DOUBLE NOT NULL,
+    -> taxable_pay DOUBLE NOT NULL,
+    -> tax DOUBLE NOT NULL,
+    -> net_pay DOUBLE NOT NULL);
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> DESCRIBE payroll;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| ID          | int unsigned | NO   | PRI | NULL    | auto_increment |
+| basic_pay   | double       | NO   |     | NULL    |                |
+| deductions  | double       | NO   |     | NULL    |                |
+| taxable_pay | double       | NO   |     | NULL    |                |
+| tax         | double       | NO   |     | NULL    |                |
+| net_pay     | double       | NO   |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+6 rows in set (0.05 sec)
+
+mysql> CREATE TABLE department
+    -> (Department_ID INT NOT NULL PRIMARY KEY,
+    -> Department_Name VARCHAR(150) NOT NULL);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> DESCRIBE department;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_ID   | int          | NO   | PRI | NULL    |       |
+| Department_Name | varchar(150) | NO   |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> CREATE TABLE employee_department
+    -> (ID INT unsigned NOT NULL AUTO_INCREMENT,
+    -> FOREIGN KEY (ID) REFERENCES employee (ID),
+    -> Department_ID INT NOT NULL,
+    -> FOREIGN KEY (Department_ID) REFERENCES department (Department_ID));
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> DESCRIBE employee_department;
++---------------+--------------+------+-----+---------+----------------+
+| Field         | Type         | Null | Key | Default | Extra          |
++---------------+--------------+------+-----+---------+----------------+
+| ID            | int unsigned | NO   | MUL | NULL    | auto_increment |
+| Department_ID | int          | NO   | MUL | NULL    |                |
++---------------+--------------+------+-----+---------+----------------+
+2 rows in set (0.05 sec)
+
+mysql> INSERT INTO company VALUES
+    -> (1, 'BridgeLabz'),
+    -> (2, 'Google'),
+    -> (3, 'Facebook');
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM company;
++------------+--------------+
+| company_ID | company_Name |
++------------+--------------+
+|          1 | BridgeLabz   |
+|          2 | Google       |
+|          3 | Facebook     |
++------------+--------------+
+3 rows in set (0.04 sec)
+
+mysql> INSERT INTO employee VALUES
+    -> (1001,1,'9988776655','Mumbai','M','Amar'),
+    -> (1002,2,'8877445566','Delhi','M','Rajat'),
+    -> (1003,3,'7755332244','Bangalore','F','Swati'),
+    -> (1004,1,'6655447799','Panvel','F','Siddhi');
+Query OK, 4 rows affected (0.04 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employee;
++------+------------+--------------+-----------+--------+--------+
+| ID   | company_ID | phone_number | address   | gender | name   |
++------+------------+--------------+-----------+--------+--------+
+| 1001 |          1 | 9988776655   | Mumbai    | M      | Amar   |
+| 1002 |          2 | 8877445566   | Delhi     | M      | Rajat  |
+| 1003 |          3 | 7755332244   | Bangalore | F      | Swati  |
+| 1004 |          1 | 6655447799   | Panvel    | F      | Siddhi |
++------+------------+--------------+-----------+--------+--------+
+4 rows in set (0.00 sec)
+
+mysql> INSERT INTO payroll VALUES
+    -> (1001,50000,5000,45000,5000,40000),
+    -> (1002,60000,1000,500,8000,30000),
+    -> (1003,80000,10000,5000,3500,70000),
+    -> (1004,100000,15000,5500,4000,60000);
+Query OK, 4 rows affected (0.05 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM payroll;
++------+-----------+------------+-------------+------+---------+
+| ID   | basic_pay | deductions | taxable_pay | tax  | net_pay |
++------+-----------+------------+-------------+------+---------+
+| 1001 |     50000 |       5000 |       45000 | 5000 |   40000 |
+| 1002 |     60000 |       1000 |         500 | 8000 |   30000 |
+| 1003 |     80000 |      10000 |        5000 | 3500 |   70000 |
+| 1004 |    100000 |      15000 |        5500 | 4000 |   60000 |
++------+-----------+------------+-------------+------+---------+
+4 rows in set (0.00 sec)
+
+mysql> INSERT INTO department VALUES
+    -> (101,'Marketing'),
+    -> (102,'IT'),
+    -> (103,'Admin');
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM department;
++---------------+-----------------+
+| Department_ID | Department_Name |
++---------------+-----------------+
+|           101 | Marketing       |
+|           102 | IT              |
+|           103 | Admin           |
++---------------+-----------------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO employee_department VALUES
+    -> (1001,101),
+    -> (1002,102),
+    -> (1003,103),
+    -> (1004,102);
+Query OK, 4 rows affected (0.05 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employee_department;
++------+---------------+
+| ID   | Department_ID |
++------+---------------+
+| 1001 |           101 |
+| 1002 |           102 |
+| 1003 |           103 |
+| 1004 |           102 |
++------+---------------+
+4 rows in set (0.00 sec)
